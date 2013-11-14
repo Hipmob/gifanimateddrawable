@@ -1,0 +1,7 @@
+*~
+bin
+gen
+dist
+build
+resources/*.class
+docs/api*
