@@ -43,7 +43,7 @@ Open a shell in the ***library*** directory and run **ant**. The JAR file produc
 
 Notes
 =====
-* We stood on the shoulders of giants here: the GifDecoder we use comes from http://code.google.com/p/animated-gifs-in-android/.
+* We stood on the shoulders of giants here: the GifDecoder we use is based on the original source at http://code.google.com/p/animated-gifs-in-android/. We added code to defer processing of all frames other than the first till a later time (so we could run that in a separate thread). 
 * Our sample animations (used in the sample app) come from http://www.animationfactory.com/en/samples.html.
 
 Author

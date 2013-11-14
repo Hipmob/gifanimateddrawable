@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<project name="gifanimationdrawable" basedir="." default="package">
+  <property environment="env"/>
+  
+  <path id="build.classpath">    
+    <fileset dir="${env.ANDROID_SDK}\platforms\android-2.0">
+      <include name="android.jar" />
+    </fileset>
+  </path>
+  
+  <target name="init">
+    <property name="build" value="build" />
+    <property name="dist" value="dist" />
+    <property name="src" value="src" />
+  </target>
+
+  <target name="clean" depends="init">
+    <delete>
+      <fileset dir="${src}" casesensitive="no" defaultexcludes="no">
+	<include name="**/*~" />
+	<include name="**/*.class" />
+	<exclude name="**/CVS" />
+	<exclude name="**/CVS/**" />
+	<exclude name="**/.cvsignore" />
+      </fileset>
+      <fileset dir="${build}" includes="**/*.class" />
+      <fileset dir="${dist}" includes="${ant.project.name}.jar" />
+      <fileset dir="." casesensitive="no" defaultexcludes="no">
+	<include name="**/*~" />
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="compile" depends="init">
+    <mkdir dir="${build}" />
+    <javac debug="${debug}" optimize="${optimize}" destdir="${build}" deprecation="${deprecation}" target="1.5" source="1.5" includeantruntime="false" excludes="com/hipmob/gifanimationdrawable/sample/DisplayGIF.java">
+      <src path="${src}" />
+      <classpath refid="build.classpath" />
+    </javac>
+  </target>
+  
+  <target name="package" depends="compile">
+    <mkdir dir="${dist}" />  
+    <jar destfile="${dist}/${ant.project.name}.jar" basedir="${build}">
+      <fileset dir="${build}">
+	<include name="com/hipmob/gifanimationdrawable/*.class" />
+      </fileset>
+    </jar>
+  </target>
+</project>
