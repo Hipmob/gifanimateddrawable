@@ -17,6 +17,7 @@ package com.hipmob.gifanimationdrawable;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -51,7 +52,7 @@ public class GifAnimationDrawable extends AnimationDrawable
 	
 	public GifAnimationDrawable(File f, boolean inline) throws IOException
 	{
-		this(new FileInputStream(f), inline);
+		this(new BufferedInputStream(new FileInputStream(f)), inline);
 	}
 	
 	public GifAnimationDrawable(InputStream is, boolean inline) throws IOException
@@ -66,7 +67,7 @@ public class GifAnimationDrawable extends AnimationDrawable
     	width = mTmpBitmap.getWidth();
         addFrame(new BitmapDrawable(mTmpBitmap), mGifDecoder.getDelay(0));
         setOneShot(mGifDecoder.getLoopCount() != 0);
-        setVisible(true, false);
+        setVisible(true, true);
 		if(inline){
 			run();
 		}else{
@@ -79,13 +80,16 @@ public class GifAnimationDrawable extends AnimationDrawable
 	private Runnable loader = new Runnable(){
 		public void run() 
 		{
-	        int i, n = mGifDecoder.getFrameCount(), t;
+			mGifDecoder.complete();
+			int i, n = mGifDecoder.getFrameCount(), t;
 	        for(i=1;i<n;i++){
 	            mTmpBitmap = mGifDecoder.getFrame(i);
 	            t = mGifDecoder.getDelay(i);
 	            android.util.Log.v("GifAnimationDrawable", "===>Frame "+i+": "+t+"]");
 	            addFrame(new BitmapDrawable(mTmpBitmap), t);
 	        }
+	        decoded = true;
+	        mGifDecoder = null;
 	    }
 	};
 	

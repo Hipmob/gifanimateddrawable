@@ -63,6 +63,13 @@ public class GifDecoder
 	protected Vector<GifFrame> frames; // frames read from current file
 	protected int frameCount;
 
+	private boolean readComplete;
+
+	public GifDecoder()
+	{
+		readComplete = false;
+	}
+	
 	private static class GifFrame {
 		public GifFrame(Bitmap im, int del) {
 			image = im;
@@ -221,7 +228,8 @@ public class GifDecoder
 	 *          containing GIF file.
 	 * @return read status code (0 = no errors)
 	 */
-	public int read(InputStream is) {
+	public int read(InputStream is)
+	{
 		init();
 		if (is != null) {
 			in = is;
@@ -235,11 +243,17 @@ public class GifDecoder
 		} else {
 			status = STATUS_OPEN_ERROR;
 		}
+		readComplete = true;
+		return status;
+	}
+	
+	public void complete()
+	{
+		readContents();
 		try {
-			is.close();
+			in.close();
 		} catch (Exception e) {
 		}
-		return status;
 	}
 
 	/**
@@ -440,7 +454,7 @@ public class GifDecoder
 		}
 		return tab;
 	}
-
+	
 	/**
 	 * Main file parser. Reads GIF content blocks.
 	 */
@@ -452,6 +466,7 @@ public class GifDecoder
 			switch (code) {
 			case 0x2C: // image separator
 			readBitmap();
+			if(!readComplete) return;
 			break;
 			case 0x21: // extension
 				code = read();
