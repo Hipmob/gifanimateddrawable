@@ -71,7 +71,7 @@ public class GifAnimationDrawable extends AnimationDrawable
         setOneShot(mGifDecoder.getLoopCount() != 0);
         setVisible(true, true);
 		if(inline){
-			run();
+			loader.run();
 		}else{
 			new Thread(loader).start();
 		}
