@@ -11,7 +11,7 @@ import java.util.Vector;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
-public class GifDecoder 
+public class GifDecoder
 {
 	/**
 	 * File read status: No errors.
@@ -27,6 +27,8 @@ public class GifDecoder
 	public static final int STATUS_OPEN_ERROR = 2;
 	/** max decoder pixel stack size */
 	protected static final int MAX_STACK_SIZE = 4096;
+    public static final    int MIN_DELAY                   = 100;
+    public static final    int MIN_DELAY_ENFORCE_THRESHOLD = 20;
 	protected InputStream in;
 	protected int status;
 	protected int width; // full image width
@@ -69,7 +71,7 @@ public class GifDecoder
 	{
 		readComplete = false;
 	}
-	
+
 	private static class GifFrame {
 		public GifFrame(Bitmap im, int del) {
 			image = im;
@@ -82,22 +84,24 @@ public class GifDecoder
 
 	/**
 	 * Gets display duration for specified frame.
-	 * 
+	 *
 	 * @param n
 	 *          int index of frame
 	 * @return delay in milliseconds
 	 */
-	public int getDelay(int n) {
-		delay = -1;
-		if ((n >= 0) && (n < frameCount)) {
-			delay = frames.elementAt(n).delay;
-		}
-		return delay;
-	}
+    public int getDelay(int n) {
+        delay = -1;
+        if ((n >= 0) && (n < frameCount)) {
+            delay = frames.elementAt(n).delay;
+            //meets browser compatibility standards
+            if (delay < MIN_DELAY_ENFORCE_THRESHOLD) delay = MIN_DELAY;
+        }
+        return delay;
+    }
 
 	/**
 	 * Gets the number of frames read from file.
-	 * 
+	 *
 	 * @return frame count
 	 */
 	public int getFrameCount() {
@@ -106,7 +110,7 @@ public class GifDecoder
 
 	/**
 	 * Gets the first (or only) image read.
-	 * 
+	 *
 	 * @return BufferedBitmap containing first frame, or null if none.
 	 */
 	public Bitmap getBitmap() {
@@ -115,7 +119,7 @@ public class GifDecoder
 
 	/**
 	 * Gets the "Netscape" iteration count, if any. A count of 0 means repeat indefinitiely.
-	 * 
+	 *
 	 * @return iteration count if one was specified, else 1.
 	 */
 	public int getLoopCount() {
@@ -211,7 +215,7 @@ public class GifDecoder
 
 	/**
 	 * Gets the image contents of frame n.
-	 * 
+	 *
 	 * @return BufferedBitmap representation of frame, or null if n is invalid.
 	 */
 	public Bitmap getFrame(int n) {
@@ -223,7 +227,7 @@ public class GifDecoder
 
 	/**
 	 * Reads GIF image from stream
-	 * 
+	 *
 	 * @param is
 	 *          containing GIF file.
 	 * @return read status code (0 = no errors)
@@ -246,7 +250,7 @@ public class GifDecoder
 		readComplete = true;
 		return status;
 	}
-	
+
 	public void complete()
 	{
 		readContents();
@@ -396,7 +400,7 @@ public class GifDecoder
 
 	/**
 	 * Reads next variable length block from input.
-	 * 
+	 *
 	 * @return number of bytes stored in "buffer"
 	 */
 	protected int readBlock() {
@@ -424,7 +428,7 @@ public class GifDecoder
 
 	/**
 	 * Reads color table as 256 RGB integer values
-	 * 
+	 *
 	 * @param ncolors
 	 *          int number of colors to read
 	 * @return int array containing 256 colors (packed ARGB with full alpha)
@@ -454,7 +458,7 @@ public class GifDecoder
 		}
 		return tab;
 	}
-	
+
 	/**
 	 * Main file parser. Reads GIF content blocks.
 	 */
